@@ -21,6 +21,19 @@ class User(Base):
     posts = relationship('Post', back_populates='user')
     comments = relationship('Comment', back_populates='user')
     likes = relationship('Like', back_populates='user')
+    # Relaciones para seguidores y seguidos
+    following = relationship('Follows', foreign_keys='Follows.follower_id', back_populates='follower')
+    followers = relationship('Follows', foreign_keys='Follows.followed_id', back_populates='followed')
+
+class Follows(Base):
+    __tablename__ = 'follows'
+    id = Column(Integer, primary_key=True)
+    follower_id = Column(Integer, ForeignKey('user.id'), nullable=False)  # El usuario que sigue
+    followed_id = Column(Integer, ForeignKey('user.id'), nullable=False)  # El usuario que es seguido
+    created_at = Column(DateTime) 
+    # Relaciones
+    follower = relationship('User', foreign_keys=[follower_id], back_populates='following')
+    followed = relationship('User', foreign_keys=[followed_id], back_populates='followers')
 
 class Post(Base):
     __tablename__ = 'post'
